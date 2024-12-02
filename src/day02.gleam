@@ -7,20 +7,27 @@ import simplifile
 pub fn main() {
   let assert Ok(lines) = simplifile.read(from: "./src/day02.sample.txt")
 
-  let result =
+  let floors =
     string.trim(lines)
     |> string.split(on: "\n")
-    |> list.map(with: string.split(_, on: " "))
-    |> list.map(with: list.filter_map(_, with: int.parse))
+    |> list.map(with: parse_line)
+
+  let result =
+    floors
     |> list.map(with: fn(floor) {
       case floor {
         [] -> #(0, Unsafe)
-        [first, ..rest] ->
-          list.fold_until(rest, #(first, Unknown), with: determine_direction)
+        [first, ..rest] -> list.fold_until(rest, #(first, Unknown), with: state)
       }
     })
     |> list.count(where: fn(r) { is_safe(r.1) })
   io.println("Safe levels: " <> int.to_string(result))
+}
+
+fn parse_line(line: String) {
+  line
+  |> string.split(on: " ")
+  |> list.filter_map(with: int.parse)
 }
 
 pub type Direction {
@@ -34,10 +41,7 @@ pub type State {
   Unsafe
 }
 
-fn determine_direction(
-  acc: #(Int, State),
-  cur: Int,
-) -> list.ContinueOrStop(#(Int, State)) {
+fn state(acc: #(Int, State), cur: Int) -> list.ContinueOrStop(#(Int, State)) {
   let #(prev, dir) = acc
   case dir, direction(prev, cur) {
     Unknown, newdir -> list.Continue(#(cur, newdir))
