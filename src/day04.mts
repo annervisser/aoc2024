@@ -6,19 +6,19 @@ const grid = input.trim().split('\n').map(line => line.split(''));
 const height = grid.length;
 const width = grid[0].length;
 
-function main() {
+function part1() {
     let count = 0;
 
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             const letter = grid[y][x];
             if (letter === 'X') {
-                count += find(y, x)
+                count += findMAS(y, x)
             }
         }
     }
 
-    console.log(count);
+    console.log('part 1: ', count);
 }
 
 type Offset = readonly [number, number];
@@ -35,7 +35,7 @@ const directions = [
 
 const MAS = 'MAS';
 
-function find(y: number, x: number) {
+function findMAS(y: number, x: number) {
     return directions.filter(
         direction => direction.every(([dy, dx], i) => {
             return (grid[y + dy]?.[x + dx] ?? '') === MAS[i];
@@ -43,4 +43,36 @@ function find(y: number, x: number) {
     ).length;
 }
 
-main();
+
+function part2() {
+    let count = 0;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const letter = grid[y][x];
+            if (letter === 'A') {
+                count += (findCrossMAS(y, x) ? 1 : 0)
+            }
+        }
+    }
+
+    console.log('Part 2: ', count);
+}
+
+const cross = [
+    [[-1, -1], [1, 1]],
+    [[1, 1], [-1, -1]],
+    [[1, -1], [-1, 1]],
+    [[-1, 1], [1, -1]],
+] satisfies ([Offset, Offset][]);
+
+function findCrossMAS(y: number, x: number) {
+    return cross.filter(
+        ([[mdy, mdx], [sdy, sdx]]) => {
+            return (grid[y + mdy]?.[x + mdx] ?? '') === 'M' && (grid[y + sdy]?.[x + sdx] ?? '') === 'S';
+        }
+    ).length === 2;
+}
+
+part1();
+part2();
