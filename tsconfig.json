@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "ESNext",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "strict": true
+  }
+}

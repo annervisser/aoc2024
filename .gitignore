@@ -3,6 +3,8 @@
 /build
 erl_crash.dump
 
+node_modules/
+
 .idea/
 .code/
 *.input.txt
